@@ -30,8 +30,6 @@ chown -R ${USER}:${USER} ${SSHDIR}/
 # check if ssh agent is running or not, if not, run
 RUN eval `ssh-agent -s` && ssh-add ${SSHDIR}/id_rsa
 
-ADD make_combined_hostfile.py /root/TopoSAT2/make_combined_hostfile.py
-ADD mpi-run.sh /root/TopoSAT2/mpi-run.sh
 RUN chmod 755 /root/TopoSAT2/mpi-run.sh
 EXPOSE 22
 
