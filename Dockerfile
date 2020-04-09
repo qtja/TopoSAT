@@ -1,7 +1,8 @@
 FROM archlinux:latest
-RUN pacman -Syyu --noconfirm && pacman -S git openssh base-devel openmpi --noconfirm
-RUN git clone https://github.com/the-kiel/TopoSAT2
-RUN cd TopoSAT2 && ./buildSolver.sh
+RUN pacman -Syyu --noconfirm && pacman -S git openssh base-devel openmpi aws-cli iproute2 --noconfirm
+RUN mkdir /root/TopoSAT2
+RUN git clone https://github.com/qtja/TopoSAT2-Source /root/TopoSAT2
+RUN cd /root/TopoSAT2 && ./buildSolver.sh
 
 # Setup SSHD
 RUN mkdir /var/run/sshd
@@ -28,3 +29,10 @@ RUN chmod -R 600 ${SSHDIR}/* && \
 chown -R ${USER}:${USER} ${SSHDIR}/
 # check if ssh agent is running or not, if not, run
 RUN eval `ssh-agent -s` && ssh-add ${SSHDIR}/id_rsa
+
+ADD make_combined_hostfile.py /root/TopoSAT2/make_combined_hostfile.py
+ADD mpi-run.sh /root/TopoSAT2/mpi-run.sh
+RUN chmod 755 /root/TopoSAT2/mpi-run.sh
+EXPOSE 22
+
+CMD /root/TopoSAT2/mpi-run.sh
