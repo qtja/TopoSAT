@@ -59,11 +59,10 @@ wait_for_nodes () {
   cat combined_hostfile
 
  
+  env
+
   # REPLACE THE FOLLOWING LINE WITH YOUR PARTICULAR SOLVER
   #time mpirun --mca btl_tcp_if_include eth0 --allow-run-as-root -np ${AWS_BATCH_JOB_NUM_NODES} --hostfile combined_hostfile /hordesat/hordesat  -c=${NUM_PROCESSES} -d=7 supervised-scripts/test.cnf
-
-
-  env
 
   # write output and result (if SAT) to two files
   resultFile="RES$$.txt"
@@ -71,7 +70,7 @@ wait_for_nodes () {
 
   MPI_PARAMS="--mca btl_tcp_if_include eth0 --allow-run-as-root -np ${AWS_BATCH_JOB_NUM_NODES} --hostfile combined_hostfile"
   TOPOSAT_PATH="TopoSAT2-Source/bin/glucose"
-  TOPOSAT_PARAMS="-nbT=${NUM_PROCESSES} -d=7 -cpu-lim=5000 -mem-lim=64000 -restartPortfolio -model -maxLBD=4 -exportPolicy=6"
+  TOPOSAT_PARAMS="-nbT=${NUM_PROCESSES} -cpu-lim=5000 -mem-lim=64000 -restartPortfolio -model -maxLBD=4 -exportPolicy=6"
   CNF_FILE="supervised-scripts/test.cnf"
 
   time mpirun ${MPI_PARAMS} ${TOPOSAT_PATH} ${TOPOSAT_PARAMS} ${CNF_FILE} 2>&1 | tee $logfile
