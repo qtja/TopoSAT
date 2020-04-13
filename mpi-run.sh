@@ -69,7 +69,7 @@ wait_for_nodes () {
 
 
   # topoSAT plain
-  time mpirun -np 1 TopoSAT2/bin/glucose -cpu-lim=5000 -nbT=24 -mem-lim=64000 -restartPortfolio -model -maxLBD=4 -exportPolicy=6 --mca btl_tcp_if_include eth0 --allow-run-as-root -np ${AWS_BATCH_JOB_NUM_NODES} --hostfile combined_hostfile -c=${NUM_PROCESSES} -d=7 $resultFile > $tmpFile 2>$errorFile
+  time mpirun -np 1 TopoSAT2-Source/bin/glucose -cpu-lim=5000 -nbT=24 -mem-lim=64000 -restartPortfolio -model -maxLBD=4 -exportPolicy=6 --mca btl_tcp_if_include eth0 --allow-run-as-root -np ${AWS_BATCH_JOB_NUM_NODES} --hostfile combined_hostfile -c=${NUM_PROCESSES} -d=7 $resultFile > $tmpFile 2>$errorFile
 
 
   # write answer
