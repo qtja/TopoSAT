@@ -68,7 +68,7 @@ wait_for_nodes () {
 
   MPI_PARAMS="--mca btl_tcp_if_include eth0 --allow-run-as-root -np ${AWS_BATCH_JOB_NUM_NODES} --hostfile combined_hostfile"
   TOPOSAT_PATH="TopoSAT2-Source/bin/glucose"
-  TOPOSAT_PARAMS="-c=${NUM_PROCESSES} -d=7 -cpu-lim=5000 -nbT=24 -mem-lim=64000 -restartPortfolio -model -maxLBD=4 -exportPolicy=6"
+  TOPOSAT_PARAMS="-nbT=${NUM_PROCESSES} -d=7 -cpu-lim=5000 -mem-lim=64000 -restartPortfolio -model -maxLBD=4 -exportPolicy=6"
   CNF_FILE="supervised-scripts/test.cnf"
 
   time mpirun ${MPI_PARAMS} ${TOPOSAT_PATH} ${TOPOSAT_PARAMS} ${CNF_FILE} 2>&1 | tee $logfile
