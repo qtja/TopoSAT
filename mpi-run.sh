@@ -64,26 +64,22 @@ wait_for_nodes () {
 
   # write output and result (if SAT) to two files
   resultFile="RES$$.txt"
-  tmpFile="tmp$$.txt"
-  errorFile="err$$.txt"
+  logfile="output.log"
 
+  MPI_PARAMS="--mca btl_tcp_if_include eth0 --allow-run-as-root -np ${AWS_BATCH_JOB_NUM_NODES} --hostfile combined_hostfile"
+  TOPOSAT_PATH="TopoSAT2-Source/bin/glucose"
+  TOPOSAT_PARAMS="-c=${NUM_PROCESSES} -d=7 -cpu-lim=5000 -nbT=24 -mem-lim=64000 -restartPortfolio -model -maxLBD=4 -exportPolicy=6"
+  CNF_FILE="supervised-scripts/test.cnf"
 
-  # topoSAT plain
-  time mpirun -np 1 TopoSAT2-Source/bin/glucose -cpu-lim=5000 -nbT=24 -mem-lim=64000 -restartPortfolio -model -maxLBD=4 -exportPolicy=6 --mca btl_tcp_if_include eth0 --allow-run-as-root -np ${AWS_BATCH_JOB_NUM_NODES} --hostfile combined_hostfile -c=${NUM_PROCESSES} -d=7 $resultFile > $tmpFile 2>$errorFile
-
+  time mpirun ${MPI_PARAMS} ${TOPOSAT_PATH} ${TOPOSAT_PARAMS} ${CNF_TEST} 2>&1 | tee $logfile
 
   # write answer
-  grep "^s " $tmpFile
+  grep "^s " $logfile
   # if sat, write satisfying assignment
   if [ -e $resultFile ] ; then
       cat $resultFile
       rm $resultFile
   fi
-
-  # clean up
-  rm $tmpFile
-  rm $errorFile
-
  }
 
 # Fetch and run a script
