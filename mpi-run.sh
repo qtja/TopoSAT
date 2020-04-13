@@ -55,9 +55,10 @@ wait_for_nodes () {
 
   # All of the hosts report their IP and number of processors. Combine all these
   # into one file with the following script:
-  python make_combined_hostfile.py ${ip}
+  python supervised-scripts/make_combined_hostfile.py ${ip}
   cat combined_hostfile
 
+ 
   # REPLACE THE FOLLOWING LINE WITH YOUR PARTICULAR SOLVER
   #time mpirun --mca btl_tcp_if_include eth0 --allow-run-as-root -np ${AWS_BATCH_JOB_NUM_NODES} --hostfile combined_hostfile /hordesat/hordesat  -c=${NUM_PROCESSES} -d=7 supervised-scripts/test.cnf
 
@@ -83,7 +84,7 @@ wait_for_nodes () {
   rm $tmpFile
   rm $errorFile
 
-}
+ }
 
 # Fetch and run a script
 report_to_master () {

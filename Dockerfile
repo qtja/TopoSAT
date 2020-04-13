@@ -1,16 +1,13 @@
-FROM archlinux:latest
-RUN pacman -Syyu --noconfirm && pacman -S git openssh base-devel openmpi aws-cli iproute2 --noconfirm
-RUN mkdir /root/TopoSAT2
-RUN git clone https://github.com/qtja/TopoSAT2-Source /root/TopoSAT2
-RUN cd /root/TopoSAT2 && ./buildSolver.sh
+FROM ubuntu:16.04
 
-# Setup SSHD
+RUN apt-get update && apt-get install -y openssh-server git
 RUN mkdir /var/run/sshd
 RUN echo 'root:THEPASSWORDYOUCREATED' | chpasswd
 RUN sed -i 's/PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
 
 # SSH login fix. Otherwise user is kicked off after login
 RUN sed 's@session\s*required\s*pam_loginuid.so@session optional pam_loginuid.so@g' -i /etc/pam.d/sshd
+RUN git clone https://github.com/qtja/TopoSAT2-Source 
 
 ENV NOTVISIBLE "in users profile"
 RUN echo "export VISIBLE=now" >> /etc/profile
@@ -30,9 +27,22 @@ chown -R ${USER}:${USER} ${SSHDIR}/
 # check if ssh agent is running or not, if not, run
 RUN eval `ssh-agent -s` && ssh-add ${SSHDIR}/id_rsa
 
-ADD make_combined_hostfile.py /root/TopoSAT2/make_combined_hostfile.py
-ADD mpi-run.sh /root/TopoSAT2/mpi-run.sh
-RUN chmod 755 /root/TopoSAT2/mpi-run.sh
+
+
+RUN apt-get update
+RUN apt-get install wget -y
+RUN apt-get install unzip
+RUN apt-get install build-essential -y
+RUN apt-get install zlib1g-dev -y
+RUN DEBIAN_FRONTEND=noninteractive apt install -y iproute2 cmake python python-pip build-essential gfortran wget curl
+RUN pip install supervisor awscli
+RUN apt-get install openmpi-bin openmpi-common libopenmpi-dev iputils-ping -y
+#ADD TopoSAT2-Source TopoSAT2-Source
+
+RUN cd TopoSAT2-Source && ./buildSolver.sh
+ADD mpi-run.sh supervised-scripts/mpi-run.sh
+ADD make_combined_hostfile.py supervised-scripts/make_combined_hostfile.py
+RUN chmod 755 supervised-scripts/mpi-run.sh
 EXPOSE 22
 
-CMD /root/TopoSAT2/mpi-run.sh
+CMD supervised-scripts/mpi-run.sh
