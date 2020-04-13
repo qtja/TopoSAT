@@ -38,6 +38,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt install -y iproute2 cmake python python-p
 RUN pip install supervisor awscli
 RUN apt-get install openmpi-bin openmpi-common libopenmpi-dev iputils-ping -y
 #ADD TopoSAT2-Source TopoSAT2-Source
+# !!!
 
 RUN cd TopoSAT2-Source && ./buildSolver.sh
 ADD mpi-run.sh supervised-scripts/mpi-run.sh
