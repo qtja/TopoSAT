@@ -71,7 +71,7 @@ wait_for_nodes () {
   TOPOSAT_PARAMS="-c=${NUM_PROCESSES} -d=7 -cpu-lim=5000 -nbT=24 -mem-lim=64000 -restartPortfolio -model -maxLBD=4 -exportPolicy=6"
   CNF_FILE="supervised-scripts/test.cnf"
 
-  time mpirun ${MPI_PARAMS} ${TOPOSAT_PATH} ${TOPOSAT_PARAMS} ${CNF_TEST} 2>&1 | tee $logfile
+  time mpirun ${MPI_PARAMS} ${TOPOSAT_PATH} ${TOPOSAT_PARAMS} ${CNF_FILE} 2>&1 | tee $logfile
 
   # write answer
   grep "^s " $logfile
