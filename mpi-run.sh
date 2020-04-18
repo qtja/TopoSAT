@@ -68,12 +68,12 @@ wait_for_nodes () {
   resultFile="RES$$.txt"
   logfile="output.log"
 
-  MPI_PARAMS="--mca btl_tcp_if_include eth0 --allow-run-as-root -np ${AWS_BATCH_JOB_NUM_NODES} --hostfile combined_hostfile"
+  MPI_PARAMS="--mca btl_tcp_if_include eth0 --allow-run-as-root -np ${AWS_BATCH_JOB_NUM_NODES} --hostfile combined_hostfile -npernode 1"
   TOPOSAT_PATH="TopoSAT2-Source/bin/glucose"
   TOPOSAT_PARAMS="-nbT=${NUM_PROCESSES} -cpu-lim=5000 -mem-lim=64000 -restartPortfolio -lazyImport -model -maxLBD=3 -exportPolicy=6"
   CNF_FILE="supervised-scripts/test.cnf"
 
-  time mpirun ${MPI_PARAMS} ${TOPOSAT_PATH} ${TOPOSAT_PARAMS} ${CNF_FILE} 2>&1 | tee $logfile
+  time mpirun ${MPI_PARAMS} ${EXTRA_MPI_PARAMS} ${TOPOSAT_PATH} ${TOPOSAT_PARAMS} ${CNF_FILE} 2>&1 | tee $logfile
 
   # write answer
   grep "^s " $logfile
