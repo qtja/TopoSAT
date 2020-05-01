@@ -65,12 +65,12 @@ wait_for_nodes () {
   #time mpirun --mca btl_tcp_if_include eth0 --allow-run-as-root -np ${AWS_BATCH_JOB_NUM_NODES} --hostfile combined_hostfile /hordesat/hordesat  -c=${NUM_PROCESSES} -d=7 supervised-scripts/test.cnf
 
   # write output and result (if SAT) to two files
-  resultFile="RES$$.txt"
+  #resultFile="RES$$.txt"
   logfile="output.log"
 
   MPI_PARAMS="--mca btl_tcp_if_include eth0 --allow-run-as-root -np ${AWS_BATCH_JOB_NUM_NODES} --hostfile combined_hostfile -npernode 1"
   TOPOSAT_PATH="TopoSAT2-Source/bin/glucose"
-  TOPOSAT_PARAMS="-nbT=${NUM_PROCESSES} -cpu-lim=5000 -mem-lim=64000 -restartPortfolio -lazyImport -model -maxLBD=3 -exportPolicy=6"
+  TOPOSAT_PARAMS="-nbT=${NUM_PROCESSES} -cpu-lim=${TOPOSAT_TIME_LIMIT:-1000} -mem-lim=${TOPOSAT_MEM_LIMIT:-64000} -restartPortfolio -lazyImport -model -maxLBD=${TOPOSAT_MAX_LBD:-4} -exportPolicy=${TOPOSAT_EXPORT_POLICY:-6}"
   CNF_FILE="supervised-scripts/test.cnf"
 
   time mpirun ${MPI_PARAMS} ${EXTRA_MPI_PARAMS} ${TOPOSAT_PATH} ${TOPOSAT_PARAMS} ${CNF_FILE} 2>&1 | tee $logfile
@@ -78,10 +78,10 @@ wait_for_nodes () {
   # write answer
   grep "^s " $logfile
   # if sat, write satisfying assignment
-  if [ -e $resultFile ] ; then
-      cat $resultFile
-      rm $resultFile
-  fi
+  #if [ -e $resultFile ] ; then
+  #    cat $resultFile
+  #    rm $resultFile
+  #fi
  }
 
 # Fetch and run a script
